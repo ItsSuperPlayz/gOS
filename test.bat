@@ -9,7 +9,6 @@ title gOS
 call :logo
 call :bar
 timeout 3 /nobreak >nul
-for /f "tokens=1,2,3,4 delims=:." %%a in ('echo %time%') do (set /a h=%%a) & (set /a m=%%b) & (set /a s=%%c) & (set /a ms=%%d)
 <nul set /p =.!BS!%bar1%!CR!
 call :text
 call :reset
@@ -26,11 +25,8 @@ net stop beep >nul 2>nul
 cd /d %temp%
 if exist gOS_settings.txt (for /f "tokens=1,2,3,4 delims=; " %%A in (gOS_settings.txt) do (set hidectrl=%%A) & (set back=%%B) & (set fore=%%C) & (set delay=%%D))
 <nul set /p =.!BS!%bar6%!CR!
-for /f "tokens=1,2,3,4 delims=:." %%a in ('echo %time%') do (set /a h=%%a - %h%) & (set /a m=%%b - %m%) & (set /a s=%%c - %s%) & (if %%d geq %ms% (set /a ms=%%d - %ms%) else (set /a ms-=%%d) & (set /a s-=1))
-set /a s=%h% * 3600 + %m% * 60 + %s%
 timeout 3 /nobreak >nul
-::<nul set /p =%bar7%!CR!Done in %s%.%ms%s.
-<nul set /p =%bar7%!CR!!BS!
+<nul set /p =.!BS!%bar7%!CR!
 timeout 2 /nobreak >nul
 :draw
 color %back%%fore%
@@ -377,13 +373,13 @@ if %select%==10 set text=Resets all settings to its defaults.
 <nul set /p =%text%!CR!
 goto :eof
 :bar
-set bar1=               ░░░░░░░░░░░░░░░░░░░░░░░
-set bar2=               ███░░░░░░░░░░░░░░░░░░░░
-set bar3=               ████████░░░░░░░░░░░░░░░
-set bar4=               █████████████░░░░░░░░░░
-set bar5=               ██████████████████░░░░░
-set bar6=               ███████████████████████
-set bar7=.                                     
+set bar1=              ░░░░░░░░░░░░░░░░░░░░░░░░░
+set bar2=              █████░░░░░░░░░░░░░░░░░░░░
+set bar3=              ██████████░░░░░░░░░░░░░░░
+set bar4=              ███████████████░░░░░░░░░░
+set bar5=              ████████████████████░░░░░
+set bar6=              █████████████████████████
+set bar7=                                       
 goto :eof
 :fail
 if %1==1 (
