@@ -1,4 +1,38 @@
 @echo off
+::Auto-elevate Admistrator by Matt (https://stackoverflow.com/a/12264592)
+:init
+setlocal DisableDelayedExpansion
+set cmdInvoke=1
+set winSysFolder=System32
+set "batchPath=%~dpnx0"
+for %%k in (%0) do set batchName=%%~nk
+set "vbsGetPrivileges=%temp%\OEgetPriv_%batchName%.vbs"
+setlocal EnableDelayedExpansion
+:checkPrivileges
+NET FILE 1>NUL 2>NUL
+if '%errorlevel%' == '0' ( goto gotPrivileges ) else ( goto getPrivileges )
+:getPrivileges
+if '%1'=='ELEV' (echo ELEV & shift /1 & goto gotPrivileges)
+ECHO Please wait...
+ECHO Set UAC = CreateObject^("Shell.Application"^) > "%vbsGetPrivileges%"
+ECHO args = "ELEV " >> "%vbsGetPrivileges%"
+ECHO For Each strArg in WScript.Arguments >> "%vbsGetPrivileges%"
+ECHO args = args ^& strArg ^& " "  >> "%vbsGetPrivileges%"
+ECHO Next >> "%vbsGetPrivileges%"
+if '%cmdInvoke%'=='1' goto InvokeCmd 
+ECHO UAC.ShellExecute "!batchPath!", args, "", "runas", 1 >> "%vbsGetPrivileges%"
+goto ExecElevation
+:InvokeCmd
+ECHO args = "/c """ + "!batchPath!" + """ " + args >> "%vbsGetPrivileges%"
+ECHO UAC.ShellExecute "%SystemRoot%\%winSysFolder%\cmd.exe", args, "", "runas", 1 >> "%vbsGetPrivileges%"
+:ExecElevation
+"%SystemRoot%\%winSysFolder%\WScript.exe" "%vbsGetPrivileges%" %*
+exit /B
+:gotPrivileges
+setlocal & cd /d %~dp0
+if '%1'=='ELEV' (del "%vbsGetPrivileges%" 1>nul 2>nul  &  shift /1)
+
+::                                                                    gOS starts here
 setlocal EnableDelayedExpansion
 mode con: cols=53 lines=19
 chcp 65001
@@ -39,52 +73,164 @@ if %tab%==3 call :tab_3 & call :content_3
 if %tab%==4 call :tab_4 & call :content_4
 if %hidectrl%==0 (call :tab_5) else (call :tab_7)
 call :help
-goto main
-:main
+:ctrl
 choice /c ADWSF /n >nul
 if %errorlevel%==1 goto limit_l
 if %errorlevel%==2 goto limit_r
 if %errorlevel%==3 goto limit_u
 if %errorlevel%==4 goto limit_d
 if %errorlevel%==5 goto choices
-goto main
+goto ctrl
 :limit_l
-if %tab%==1 goto main
+if %tab%==1 goto ctrl
 set /a tab-=1
 set select=1
 set confirm=0
+set egg=0
 goto draw
 :limit_r
-if %tab%==4 goto main
+if %tab%==4 goto ctrl
 set /a tab+=1
 set select=1
 set confirm=0
 goto draw
 :limit_u
-if %select%==1 goto main
+if %select%==1 goto ctrl
 if %tab%==3 (
 if %select%==9 (set select=3) & goto draw
 )
-if %tab%==4 goto main
+if %tab%==4 goto ctrl
 set /a select-=1
 set confirm=0
 goto draw
 :limit_d
+if %tab%==1 goto ctrl
 if %tab%==2 (
-if %select%==4 goto main
+if %select%==4 goto ctrl
 )
 if %tab%==3 (
-if %select%==10 goto main
+if %select%==10 goto ctrl
 if %select%==3 set select=9 & goto draw
 )
-if %tab%==4 goto main
+if %tab%==4 (
+set /a egg+=1
+if %egg%==4 (<nul set /p =What are you nerd doing here?)
+goto ctrl
+)
 set /a select+=1
 set confirm=0
 goto draw
 :choices
+if %tab%==1 goto main
 if %tab%==2 goto power
 if %tab%==3 goto settings
-goto main
+goto ctrl
+:main
+if %select%==1 (
+goto activator0
+)
+goto draw
+:activator0
+cls
+call :tab_1 & call :box_2
+if %hidectrl%==1 (call :tab_7) else (call :tab_10)
+choice /c yn /n >nul
+if %errorlevel%==1 goto activator
+if %errorlevel%==2 goto draw
+:activator
+cls
+call :tab_1 & call :box_3
+if %hidectrl%==1 (call :tab_7) else (call :tab_9)
+<nul set /p =Checking internet connection...!CR!
+ver >nul
+ping google.com >nul
+if %errorlevel% neq 0 (
+<nul set /p =Failed: No internet connection.  [Any key] Go back  !CR!
+pause >nul
+goto draw
+)
+<nul set /p =Beginning the activation process...                 !CR!
+timeout 2 /nobreak >nul
+<nul set /p =Detecting Office 2010...                            !CR!
+if exist "%ProgramFiles%\Microsoft Office\Office14\ospp.vbs" cd /d "%ProgramFiles%\Microsoft Office\Office14" & (<nul set /p =Found Office 2010. Activating...                    !CR!) & goto office14
+if exist "%ProgramFiles(x86)%\Microsoft Office\Office14\ospp.vbs" cd /d "%ProgramFiles(x86)%\Microsoft Office\Office14" & (<nul set /p =Found Office 2010. Activating...                    !CR!) & goto office14
+<nul set /p =Detecting Office 2013...                            !CR!
+if exist "%ProgramFiles%\Microsoft Office\Office15\ospp.vbs" cd /d "%ProgramFiles%\Microsoft Office\Office15" & goto office15
+if exist "%ProgramFiles(x86)%\Microsoft Office\Office15\ospp.vbs" cd /d "%ProgramFiles(x86)%\Microsoft Office\Office15" & goto office15
+<nul set /p =Detecting Office 2016 / 2019 / 2021 / 365...        !CR!
+if exist "%ProgramFiles%\Microsoft Office\Office16" cd /d "%ProgramFiles%\Microsoft Office\Office16" & goto office16
+if exist "%ProgramFiles(x86)%\Microsoft Office\Office16" cd /d "%ProgramFiles(x86)%\Microsoft Office\Office16" & goto office16
+<nul set /p =Failed: No Office was found.     [Any key] Go back  !CR!
+pause >nul
+goto draw
+:office14
+timeout 2 /nobreak >nul
+<nul set /p =(1 / 3) Installing license key...                   !CR!
+cscript ospp.vbs /inpkey:VYBBJ-TRJPB-QFQRF-QFT4D-H3GVB >%temp%\log.txt
+cscript ospp.vbs /inpkey:YC7DK-G2NP3-2QQC3-J6H88-GVGXT >>%temp%\log.txt
+<nul set /p =(2 / 3) Changing host...                            !CR!
+cscript ospp.vbs /sethst:kms8.msguides.com >>%temp%\log.txt
+cscript ospp.vbs /setprt:1688 >%temp%\log.txt
+<nul set /p =(3 / 3) Activating...                               !CR!
+cscript ospp.vbs /act >>%temp%\log.txt
+goto activator2
+:office15
+<nul set /p =Found Office 2013. Activating...                    !CR!
+goto office14
+:office16
+for /f %x in ('dir /b ..\root\Licenses16\proplusvl_kms*.xrm-ms') do cscript ospp.vbs /inslic:"..\root\Licenses16\%x" >nul && goto 2016
+for /f %x in ('dir /b ..\root\Licenses16\ProPlus2019VL*.xrm-ms') do cscript ospp.vbs /inslic:"..\root\Licenses16\%x" >nul && goto 2019
+for /f %x in ('dir /b ..\root\Licenses16\ProPlus2021VL_KMS*.xrm-ms') do cscript ospp.vbs /inslic:"..\root\Licenses16\%x" >nul && goto 2021
+exit
+:2016
+<nul set /p =Found Office 2016 / 365. Activating...              !CR!
+timeout 2 /nobreak >nul
+<nul set /p =(1 / 3) Installing license key...                   !CR!
+cscript ospp.vbs /inpkey:XQNVK-8JYDB-WJ9W3-YJ8YR-WFG99 >%temp%\log.txt
+cscript ospp.vbs /unpkey:BTDRB >>%temp%\log.txt
+cscript ospp.vbs /unpkey:KHGM9 >>%temp%\log.txt
+cscript ospp.vbs /unpkey:CPQVG >>%temp%\log.txt
+<nul set /p =(2 / 3) Changing host...                            !CR!
+cscript ospp.vbs /sethst:107.175.77.7 >>%temp%\log.txt
+cscript ospp.vbs /setprt:1688 >>%temp%\log.txt
+<nul set /p =(3 / 3) Activating...                               !CR!
+cscript ospp.vbs /act >>%temp%\log.txt
+goto activator2
+:2019
+<nul set /p =Found Office 2019. Activating...                    !CR!
+timeout 2 /nobreak >nul
+<nul set /p =(1 / 3) Installing license key...                   !CR!
+cscript ospp.vbs /unpkey:6MWKP >%temp%\log.txt
+cscript ospp.vbs /inpkey:NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP >>%temp%\log.txt
+<nul set /p =(2 / 3) Changing host...                            !CR!
+cscript ospp.vbs /sethst:107.175.77.7 >>%temp%\log.txt
+cscript ospp.vbs /setprt:1688 >>%temp%\log.txt
+<nul set /p =(3 / 3) Activating...                               !CR!
+cscript ospp.vbs /act >>%temp%\log.txt
+goto activator2
+:2021
+<nul set /p =Found Office 2021. Activating...                    !CR!
+timeout 2 /nobreak >nul
+<nul set /p =(1 / 3) Installing license key...                   !CR!
+cscript ospp.vbs /unpkey:6F7TH >%temp%\log.txt
+cscript ospp.vbs /inpkey:FXYTK-NJJ8C-GB6DW-3DYQT-6F7TH >>%temp%\log.txt
+<nul set /p =(2 / 3) Changing host...                            !CR!
+cscript ospp.vbs /sethst:107.175.77.7 >>%temp%\log.txt
+cscript ospp.vbs /setprt:1688 >>%temp%\log.txt
+<nul set /p =(3 / 3) Activating...                               !CR!
+cscript ospp.vbs /act >>%temp%\log.txt
+:activator2
+ver >nul
+find /i "Product activation successful" %temp%\log.txt >nul
+if %errorlevel%==1 (
+<nul set /p =Failed: Please try again.        [Any key] Go back  !CR!
+pause >nul
+) else (
+<nul set /p =Activation succeeded.            [Any key] Go back  !CR!
+pause >nul
+)
+del %temp%\log.txt
+goto draw
 :power
 if %select%==1 (
 cls
@@ -99,13 +245,13 @@ if %select%==4 (
 shutdown /s /fw /t %delay% >nul 2>nul
 if %errorlevel% neq 0 (
 <nul set /p =This feature is not supported on your computer.!CR!
-goto main
+goto ctrl
 )
 )
 if %delay%==0 (
-if %select%==2 (<nul set /p =Shutting down...                                     !CR!) & goto main
-if %select%==3 (<nul set /p =Restarting...                                        !CR!) & goto main
-if %select%==4 (<nul set /p =Restarting...                                        !CR!) & goto main
+if %select%==2 (<nul set /p =Shutting down...                                     !CR!) & goto ctrl
+if %select%==3 (<nul set /p =Restarting...                                        !CR!) & goto ctrl
+if %select%==4 (<nul set /p =Restarting...                                        !CR!) & goto ctrl
 ) else (
 if %select%==2 (<nul set /p =Shutting down in %delay% seconds.          [C]ancel!CR!)
 if %select%==3 (<nul set /p =Restarting in %delay% seconds.          [C]ancel!CR!)
@@ -116,7 +262,7 @@ choice /c c /n >nul
 if %errorlevel%==1 (
 shutdown /a
 <nul set /p =Canceled shutdown / restart.                        !CR!
-goto main
+goto ctrl
 ) else (
 goto c
 )
@@ -139,15 +285,14 @@ if %delay%==10 (set delay=30) & goto draw
 if %delay%==30 (set delay=60) & goto draw
 if %delay%==60 (set delay=0) & goto draw
 :save
-cd /d %temp%
-echo %hidectrl%;%back%;%fore%;%delay% >gOS_settings.txt
+echo %hidectrl%;%back%;%fore%;%delay% >%temp%\gOS_settings.txt
 <nul set /p =Successfully saved settings.                        !CR!
-goto main
+goto ctrl
 :resetdefaults
 if %confirm%==0 (
 set confirm=1
 <nul set /p =%ctext%!CR!
-goto main
+goto ctrl
 )
 if %confirm%==1 (
 set confirm=0
@@ -163,7 +308,7 @@ call :tab_3
 call :box_1
 if %hidectrl%==0 call :tab_6
 if %hidectrl%==1 call :tab_7
-set /p input=Choose background color (current: %back%): 
+set /p input=Set background color (current: %back%): 
 for %%A in (%colorcode%) do (if /i "%input%"=="%%A" (set back=%%A) & (goto color2))
 goto color
 :color2
@@ -173,7 +318,7 @@ call :tab_3
 call :box_1
 if %hidectrl%==0 call :tab_6
 if %hidectrl%==1 call :tab_7
-set /p input=Choose text color (current: %fore%): 
+set /p input=Set text color (current: %fore%): 
 for %%A in (%colorcode%) do (if /i "%input%"=="%%A" (set fore=%%A) & (goto color3))
 goto color2
 :color3
@@ -201,8 +346,9 @@ echo ║    MAIN    ║    power      settings       about   ║
 echo ║            ╚══════════════════════════════════════╣
 goto :eof
 :content_1
+if %select%==1 (set select1l=%la%) & (set select1r=%ra%)
 echo ║                                                   ║
-echo ║                                                   ║
+echo ║%select1l%MS Office Activator%select1r%                            ║
 echo ║                                                   ║
 echo ║                                                   ║
 echo ║                                                   ║
@@ -277,9 +423,9 @@ echo ║                        gOS                        ║
 echo ║               Build 1 - 25.01.2024                ║
 echo ║                                                   ║
 echo ║                                                   ║
-echo ║                                                   ║
-echo ║                                                   ║
-echo ║                                                   ║
+echo ║       This program is designed to work on         ║
+echo ║        Windows Command Prompt (cmd.exe).          ║
+echo ║   May not render correctly on Windows Terminal.   ║
 echo ║                                                   ║
 echo ║                                                   ║
 echo ║                                                   ║
@@ -307,6 +453,11 @@ echo ╠════════════════════════
 echo ║                                                   ║
 echo ╚═══════════════════════════════════════════════════╝
 goto :eof
+:tab_10
+echo ╠═══════════════════════════════════════════════════╣
+echo ║                 [Y]es      [N]o                   ║
+echo ╚═══════════════════════════════════════════════════╝
+goto :eof
 :box_1
 echo ║                                                   ║
 echo ║  ╔═════════════════════════════════════════════╗  ║
@@ -321,6 +472,34 @@ echo ║  ║     7 = White          F = Bright White     ║  ║
 echo ║  ╚═════════════════════════════════════════════╝  ║
 echo ║                                                   ║
 goto :eof
+:box_2
+echo ║                                                   ║
+echo ║  ╔═════════════════════════════════════════════╗  ║
+echo ║  ║                   WARNING                   ║  ║
+echo ║  ║                                             ║  ║
+echo ║  ║ This feature VIOLATES Microsoft Terms of    ║  ║
+echo ║  ║ Use (microsoft.com/en-us/legal/terms-of-use)║  ║
+echo ║  ║                                             ║  ║
+echo ║  ║ Using this will most likely VOID your       ║  ║
+echo ║  ║ current license key.                        ║  ║
+echo ║  ║           Are you sure to continue?         ║  ║
+echo ║  ╚═════════════════════════════════════════════╝  ║
+echo ║                                                   ║
+goto :eof
+:box_3
+echo ║                                                   ║
+echo ║  ╔═════════════════════════════════════════════╗  ║
+echo ║  ║                 Please wait...              ║  ║
+echo ║  ║                                             ║  ║
+echo ║  ║Activation methods by MS Guides(msguides.com)║  ║
+echo ║  ║                                             ║  ║
+echo ║  ║ After activation ends SUCCESSFULLY, open    ║  ║
+echo ║  ║ any Office application and go to Files ^>    ║  ║
+echo ║  ║ Account to check the activation status.     ║  ║
+echo ║  ║Note: This feature may not work as intended. ║  ║
+echo ║  ╚═════════════════════════════════════════════╝  ║
+echo ║                                                   ║
+goto :eof
 :text
 set blank=  
 set ctext=Press [F] again to confirm action.                   
@@ -331,11 +510,12 @@ set off=OFF
 set tab=1
 set select=1
 set confirm=0
+set egg=0
 set colorcode=0;1;2;3;4;5;6;7;8;9;A;B;C;D;E;F
 :defaults
 set hidectrl=0
-set back=1
-set fore=F
+set back=0
+set fore=7
 set delay=0
 goto :eof
 :reset
@@ -356,7 +536,10 @@ set state1=%off%
 set state2=%off%
 goto :eof
 :help
-set text= 
+set "text= "
+if %tab%==1 (
+if %select%==1 set text=Activates all versions of Office with no costs.
+)
 if %tab%==2 (
 if %select%==1 set text=Quits this program.
 if %select%==2 set text=Shuts down this computer.
@@ -384,13 +567,13 @@ goto :eof
 :fail
 if %1==1 (
 echo.
-echo Boot failed: NO_ADMIN_PRIVILEGES
+echo Boot failed: No Administrator privileges.
 pause >nul
 exit
 )
 if %1==2 (
 echo.
-echo Boot failed: LOAD_CONFIG_FAIL
+echo Boot failed: Failed while loading settings.
 pause >nul
 exit
 )
@@ -402,5 +585,8 @@ endlocal
 ::- Added Settings
 ::BUILD 1 - 25.01.2024
 ::- Added "POWER" options
+::- Added help text
+::- Added progress bar at boot (actually works!)
+::- Stole some office activator :D
+::- Stole auto-elevate from Matt LOL
 ::- Fixed bugs
-::- Simplified scripts
