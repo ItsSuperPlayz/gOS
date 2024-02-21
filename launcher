@@ -35,8 +35,10 @@ echo n|start /wait gos.bat
 echo Closing...
 cd ..
 rmdir /s /q %folder%
+del "%~dp0\launcher.bat"
 exit
 :error
 rmdir /s /q %folder%
 echo !ESC![31mFailed downloading neccesary files.
 pause >nul
+del "%~dp0\launcher.bat"
