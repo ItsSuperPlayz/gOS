@@ -1,0 +1,38 @@
+@echo off
+setlocal EnableDelayedExpansion
+for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
+echo.
+echo !ESC![36mLaunching gOS, please wait...
+echo !ESC![36mDownloading files...
+cd /d "%temp%"
+set folder=%random%%random%%random%%random%%random%
+mkdir %folder%
+cd %folder%
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/gos >gos.bat || goto error
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/htb >htb.bat || goto error
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/hchar >hchar.vbs || goto error
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/cursorsize >cursorsize.exe.hex || goto error
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/getkey >getkey.exe.hex || goto error
+echo !ESC![36mUnpacking files...
+cmd /c htb cursorsize.exe.hex >nul
+cmd /c htb getkey.exe.hex >nul
+echo !ESC![36mFinishing up...
+del cursorsize.exe.hex
+del getkey.exe.hex
+del htb.bat
+del hchar.vbs
+echo !ESC![36mStarting gOS...
+echo.
+echo !ESC![36mPLEASE KEEP THIS WINDOW OPEN. THIS WILL AUTOMATICALLY CLOSE WHEN YOU EXIT gOS.
+echo.
+echo n|start /wait gos.bat
+echo.
+echo !ESC![37mClosing...
+cd ..
+rmdir /s /q %folder%
+del "%~dp0\launcher.bat" >nul 2>nul
+exit
+:error
+rmdir /s /q %folder%
+echo !ESC![31mFailed downloading neccesary files.
+del "%~dp0\launcher.bat" >nul 2>nul
