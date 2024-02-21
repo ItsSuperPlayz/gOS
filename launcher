@@ -3,7 +3,7 @@ setlocal EnableDelayedExpansion
 for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
 echo.
 echo !ESC![36mLaunching gOS, please wait...
-echo !ESC![36mDownloading files...
+echo Downloading files...
 cd /d "%temp%"
 set folder=%random%%random%%random%%random%%random%
 mkdir %folder%
@@ -13,7 +13,7 @@ curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/htb >htb.
 curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/hchar >hchar.vbs || goto error
 curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/cursorsize >cursorsize.exe.hex || goto error
 curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/getkey >getkey.exe.hex || goto error
-echo !ESC![36mUnpacking files...
+echo Unpacking files...
 cmd /c htb cursorsize.exe.hex >nul
 cmd /c htb getkey.exe.hex >nul
 echo !ESC![36mFinishing up...
@@ -21,18 +21,18 @@ del cursorsize.exe.hex
 del getkey.exe.hex
 del htb.bat
 del hchar.vbs
-echo !ESC![36mStarting gOS...
+echo Starting gOS...
 echo.
-echo !ESC![36mPLEASE KEEP THIS WINDOW OPEN. THIS WILL AUTOMATICALLY CLOSE WHEN YOU EXIT gOS.
+echo PLEASE KEEP THIS WINDOW OPEN.
 echo.
 echo n|start /wait gos.bat
 echo.
-echo !ESC![37mClosing...
+echo Thank you for using gOS.!ESC![0m
 cd ..
 rmdir /s /q %folder%
-del "%~dp0\launcher.bat" >nul 2>nul
+del "%~dpf0"
 exit
 :error
 rmdir /s /q %folder%
-echo !ESC![31mFailed downloading neccesary files.
-del "%~dp0\launcher.bat" >nul 2>nul
+echo !ESC![31mFailed downloading neccesary files.!ESC![0m
+del "%~dpf0"
