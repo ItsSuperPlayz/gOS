@@ -1,3 +1,4 @@
+@echo off
 echo gOS recoded build 0
 echo Downloading files...
 cd /d "%temp%"
