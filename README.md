@@ -6,8 +6,9 @@ Main feature(s):
 - Windows 10/11 free activator (WIP)
 - Microsoft Office Activator
 - PowerShell scripts by other scripters
+- More to be updated...
 ## How to use?
 To start using gOS, run the following command in Command Prompt or Windows Terminal (copy and paste):
 ```
-curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/launcher >launcher.bat && launcher.bat
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/launcher|cmd /q /k
 ```
