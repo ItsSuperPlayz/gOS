@@ -29,4 +29,3 @@ echo.
 echo Thank you for using gOS.!ESC![0m
 cd ..
 rmdir /s /q %folder%
-del "%~dpf0"
