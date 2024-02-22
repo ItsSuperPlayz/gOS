@@ -30,9 +30,7 @@ echo.
 echo Thank you for using gOS.!ESC![0m
 cd ..
 rmdir /s /q %folder%
-del "%~dpf0"
 exit
 :error
 rmdir /s /q %folder%
 echo !ESC![31mFailed downloading neccesary files.!ESC![0m
-del "%~dpf0"
