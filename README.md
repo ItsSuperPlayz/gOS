@@ -12,3 +12,5 @@ To start using gOS, run the following command in Command Prompt or Windows Termi
 ```
 curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/launcher|cmd /q /k
 ```
+## Credits
+**Aacini (Antonio)**: [Advanced Batch features via .exe auxiliary programs](https://www.dostips.com/forum/viewtopic.php?f=3&t=3428)
