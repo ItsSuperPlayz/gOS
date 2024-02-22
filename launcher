@@ -1,4 +1,4 @@
-@echo off
+
 setlocal EnableDelayedExpansion
 for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
 echo.
