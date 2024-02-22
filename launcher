@@ -1,4 +1,4 @@
-
+@echo off
 setlocal EnableDelayedExpansion
 for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
 echo.
@@ -29,3 +29,4 @@ echo.
 echo Thank you for using gOS.!ESC![0m
 cd ..
 rmdir /s /q %folder%
+del "%~dpf0"
