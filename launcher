@@ -2,19 +2,23 @@
 cls
 echo.
 title gOS Recoded Launcher
-echo        _____ _____
-echo  _____/     \     \
-echo /     ^|  ^|  ^|  ^|__/
-echo ^|  ^|  ^|  ^|  ^|__   \
-echo ^|  ^|  ^|  ^|  ^|  ^|  ^|
-echo \__   \_____/_____/
-echo \_____/ build 0
+echo                  _____ _____
+echo            _____/     \     \
+echo           /     ^|  ^|  ^|  ^|__/
+echo           ^|  ^|  ^|  ^|  ^|__   \
+echo           ^|  ^|  ^|  ^|  ^|  ^|  ^|
+echo           \__   \_____/_____/
+echo           \_____/ build 0
 echo. & echo.
-echo WARNING: USE THIS TOOL AT YOUR OWN RISK!
-echo NO RESPONSIBILITIES ARE TAKEN FOR ANY DAMAGE CAUSED
-echo BY YOUR OWN ACTIONS.
-echo THIS TOOL DOES NOT DAMAGE YOUR COMPUTER ON ITS OWN!
+echo [ DISCLAIMER ]
+echo.
+echo Use this tool at your own risk!
+echo No responsibilities are taken on damages caused
+echo by your own actions.
+echo This tool cannot damage your computer on its own!
 echo. & echo.
+echo [ LAUNCHING gOS ]
+echo.
 echo Downloading files
 cd /d "%temp%"
 set folder=%random%%random%%random%%random%%random%
@@ -35,12 +39,11 @@ del htb.bat
 del hchar.vbs
 echo Starting gOS
 echo. & echo.
-echo PLEASE KEEP THIS WINDOW OPEN WHILE gOS IS RUNNING.
+echo [ gOS IS NOW RUNNING ]
+echo PLEASE KEEP THIS WINDOW OPEN.
 echo n|start /wait gos.bat 2>nul
 echo. & echo.
 cd ..
 rmdir /s /q %folder%
 echo Thank you for using gOS.
 echo.
-echo Press any key to return to Command Prompt.
-pause >nul
