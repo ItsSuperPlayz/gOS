@@ -1,0 +1,54 @@
+@echo off
+cls
+echo.
+title gOS Recoded Launcher
+echo                       _____ _____
+echo                 _____/     \     \
+echo                /     ^|  ^|  ^|  ^|__/
+echo                ^|  ^|  ^|  ^|  ^|__   \
+echo                ^|  ^|  ^|  ^|  ^|  ^|  ^|
+echo                \__   \_____/_____/
+echo                \_____/ build 0
+echo. & echo.
+echo [ DISCLAIMER ]
+echo.
+echo Use this tool at your own risk!
+echo No responsibilities are taken on damages caused
+echo by your own actions.
+echo This tool cannot damage your computer on its own!
+echo. & echo.
+echo [ LAUNCHING gOS ]
+echo.
+echo Downloading files...
+cd /d "%temp%"
+if exist gOS* del gOS* /q
+set folder=gOS%random%%random%%random%%random%%random%
+mkdir %folder%
+cd %folder%
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/gos >gos.bat
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/htb >htb.bat
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/hchar >hchar.vbs
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/cursorsize >cursorsize.exe.hex
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/getkey >getkey.exe.hex
+echo Unpacking files...
+cmd /c htb cursorsize.exe.hex >nul
+cmd /c htb getkey.exe.hex >nul
+echo Finishing up...
+del cursorsize.exe.hex
+del getkey.exe.hex
+del htb.bat
+del hchar.vbs
+echo Starting gOS...
+echo. & echo.
+echo [ gOS IS NOW RUNNING ]
+echo.
+echo PLEASE KEEP THIS WINDOW OPEN.
+echo n|start /wait gos.bat 2>nul
+echo. & echo.
+cd ..
+rmdir /s /q %folder%
+echo Thank you for using gOS.
+echo.
+echo Exiting launcher in 5 seconds, press any key to skip...
+timeout 5 >nul
+cls
