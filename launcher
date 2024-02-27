@@ -1,0 +1,17 @@
+@echo off
+set folder=%random%%random%%random%
+mkdir %folder%
+set "dir=%temp%\%folder%"
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/gos >%dir%\gos.bat
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/htb >%dir%\htb.bat
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/hchar >%dir%\hchar.vbs
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/cursorsize >%dir%\cursorsize.exe.hex
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/getkey >%dir%\getkey.exe.hex
+cmd /c htb cursorsize.exe.hex >nul
+cmd /c htb getkey.exe.hex >nul
+del cursorsize.exe.hex
+del getkey.exe.hex
+del htb.bat
+del hchar.vbs
+echo n|start /wait gos.bat 2>nul
+rmdir /s /q %dir%
