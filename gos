@@ -17,6 +17,7 @@ pause >nul
 exit
 )
 timeout 2 /nobreak >nul
+pause
 :draw
 call :drawcalc
 :ctrl
