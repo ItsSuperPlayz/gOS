@@ -1,0 +1,36 @@
+@echo off
+echo. & echo.
+<nul set /p =Creating temporary folder...
+set "folder=%random%%random%%random%"
+md "%temp%\%folder%"
+pushd "%temp%\%folder%"
+echo OK
+echo %temp%\%folder%
+echo Downloading files...
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/gos >gos.bat
+if exist gos.bat (<nul set /p =1/5 OK  ) else (<nul set /p =1/5 FAILED  )
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/htb >htb.bat
+if exist htb.bat (<nul set /p =2/5 OK  ) else (<nul set /p =2/5 FAILED  )
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/hchar >hchar.vbs
+if exist hchar.vbs (<nul set /p =3/5 OK  ) else (<nul set /p =3/5 FAILED  )
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/cursorsize >cursorsize.exe.hex
+if exist cursorsize.exe.hex (<nul set /p =4/5 OK  ) else (<nul set /p =4/5 FAILED  )
+curl --silent https://raw.githubusercontent.com/ItsSuperPlayz/gOS/main/getkey >getkey.exe.hex
+if exist getkey.exe.hex (echo 5/5 OK) else (echo 5/5 FAILED)
+<nul set /p =Verifying downloaded files...
+for %a in (gos.bat,htb.bat,hchar.vbs,cursorsize.exe.hex,getkey.exe.hex) do if not exist %a (echo FAILED)&(echo.)&(rd /s /q "%temp%\%folder%")&(goto :eof)
+echo OK
+echo Unpacking files...
+call htb.bat cursorsize.exe.hex >nul
+if exist cursorsize.exe (<nul set /p =1/2 OK  ) else (<nul set /p =1/2 FAILED  )
+call htb.bat getkey.exe.hex >nul
+if exist getkey.exe (echo 2/2 OK) else (echo 2/2 FAILED)
+<nul set /p =Verifying unpacked files...
+for %a in (cursorsize.exe,getkey.exe) do if not exist %a (echo FAILED)&(echo.)&(rd /s /q "%temp%\%folder%")&(goto :eof)
+echo OK
+echo gOS is now running. Please keep this window open.
+start /wait gos.bat 2>nul
+popd
+<nul set /p =Removing temporary folder...
+rd /s /q "%temp%\%folder%"
+echo OK
